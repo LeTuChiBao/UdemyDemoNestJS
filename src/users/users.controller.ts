@@ -9,16 +9,17 @@ import { BadRequestException,
     Session, 
     UseInterceptors,
     UseGuards,
-    Query } from '@nestjs/common';
+    Query, 
+    NotFoundException} from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-use.dto';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dtos/update-use.dto';
-import { Serialize } from 'src/interceptors/serialize.interceptor';
+import { Serialize } from '../interceptors/serialize.interceptor';
 import { UserDto } from './dtos/user.dto';
 import { AuthService } from './auth.service';
 import { User } from './user.entity';
 import { CurrentUser } from './decorator/current-user.decorator';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { AuthGuard } from '../guards/auth.guard';
 
 
 @Controller('auth')
@@ -36,7 +37,7 @@ export class UsersController {
     // }
 
 
-    @UseGuards(AuthGuard)
+    // @UseGuards(AuthGuard)
     @Get('/whoami')
     whoAmI(@CurrentUser() user:User){
         return user
@@ -62,15 +63,16 @@ export class UsersController {
     }
 
     @Get('/:id')
-    findUser(@Param('id') id: string){
-        console.log('handler is running')
-        return this.usersService.findOne(Number(id))
+    async findUser(@Param('id') id: string){
+        const user = await this.usersService.findOne(Number(id))
+        if(!user) throw new NotFoundException('User not found')
+        return user;
     }
 
     @Get()
-    findEmail(@Query('email') email: string){
+    async findEmail(@Query('email') email: string){
         if(!email) throw new BadRequestException('Query is wrong field')
-        return this.usersService.find(email)
+        return await this.usersService.find(email)
     }
 
     @Patch('/:id')

@@ -11,7 +11,7 @@ export class AuthService {
     async signup(email : string , password: string){
         //See if email is in use
         const users = await this.usersService.find(email);
-        if(users.length) throw new BadRequestException('Email was used');
+        if(users.length) throw new BadRequestException('Email already in use');
         
         //Hash the users password
         //-- Generate a salt
@@ -32,7 +32,6 @@ export class AuthService {
 
     async signIn(email:string , password:string ){
         const [user] = await this.usersService.find(email);
-        console.log(user)
         if(!user) throw new NotFoundException('User not found');
         const [salt,storeHash] = user.password.split('.');
 
