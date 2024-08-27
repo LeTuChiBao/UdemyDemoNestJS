@@ -1,11 +1,15 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, forwardRef, HttpException, HttpStatus, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { UpdateUserDto } from './dtos/update-use.dto';
+import { AuthService } from './auth.service';
 @Injectable()
 export class UsersService {
-    constructor(@InjectRepository(User) private userRepository: Repository<User>){}
+    constructor(
+        @InjectRepository(User) private userRepository: Repository<User>,
+        @Inject(forwardRef(() => AuthService)) private authService : AuthService
+    ){}
 
     async create(email : string , password: string){
         const checkExitEmail = await this.userRepository.findOneBy({email})
@@ -29,6 +33,13 @@ export class UsersService {
     async update(id : number, attrs: Partial<User>){
         const user = await this.findOne(id)
         if(!user) throw new NotFoundException('User not found')
+           
+        if(attrs.password) {
+            const hashedPassword  = await this.authService.hashPass(attrs.password);
+            attrs.password = hashedPassword ;
+            console.log(hashedPassword)
+        }
+        Object.assign(user, attrs);
         return this.userRepository.save(user) 
     }
 
