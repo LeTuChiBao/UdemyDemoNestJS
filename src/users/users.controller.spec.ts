@@ -32,7 +32,7 @@ describe('UsersController', () => {
         return Promise.resolve({id:1, email}as User);
       },
       signIn: (email:string, password:string)=> {
-        return Promise.resolve({id:1, email, password}as User);
+        return Promise.resolve({id:1, email}as User);
       }
      }
     const module: TestingModule = await Test.createTestingModule({
