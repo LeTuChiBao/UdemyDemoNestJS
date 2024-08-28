@@ -2,7 +2,7 @@ POST http://localhost:3000/auth/signup
 Content-Type: application/json
 
 {
-    "email": "test2@test.com",
+    "email": "test@test.com",
     "password":"123456"
 }
 ### Sign in as an exitsting user
@@ -10,7 +10,7 @@ POST http://localhost:3000/auth/signin
 Content-Type: application/json
 
 {
-    "email": "test1@test.com",
+    "email": "test@test.com",
     "password":"123456"
 }
 
@@ -21,7 +21,7 @@ GET  http://localhost:3000/auth/whoami
 POST  http://localhost:3000/auth/signout
 
 ###
-GET  http://localhost:3000/auth/10
+GET  http://localhost:3000/auth/1
 
 
 ###

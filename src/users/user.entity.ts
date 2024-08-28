@@ -1,5 +1,7 @@
 
-import { AfterInsert,AfterRemove,AfterUpdate, Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Report } from "../reports/report.entity";
+import { AfterInsert,AfterRemove,AfterUpdate, Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+
 
 @Entity()
 export class User {
@@ -16,6 +18,8 @@ export class User {
     logInsert(){
         console.log('Inserted User with Id', this.id);
     }
+    @OneToMany(()=> Report, (report)=> report.user)
+    reports: Report[];
 
     @AfterUpdate()
     logUpdate(){
@@ -26,4 +30,6 @@ export class User {
     logRemove(){
         console.log('Removed User with id',this.id);
     }
+
+   
 }

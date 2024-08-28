@@ -1,0 +1,19 @@
+POST http://localhost:3000/reports
+Content-Type: application/json
+
+{
+    "make": "subaru",
+    "model": "xrt-1.5",
+    "year":  2012,
+    "mileage": 10200,
+    "long": 0,
+    "lat": 0,
+    "price": 100000
+}
+### Approve report
+PATCH http://localhost:3000/reports/2
+Content-Type: application/json
+
+{
+    "approved": true
+}
