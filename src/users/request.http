@@ -2,7 +2,7 @@ POST http://localhost:3000/auth/signup
 Content-Type: application/json
 
 {
-    "email": "test@test.com",
+    "email": "user@test.com",
     "password":"123456"
 }
 ### Sign in as an exitsting user
@@ -10,7 +10,7 @@ POST http://localhost:3000/auth/signin
 Content-Type: application/json
 
 {
-    "email": "test@test.com",
+    "email": "user@test.com",
     "password":"123456"
 }
 
