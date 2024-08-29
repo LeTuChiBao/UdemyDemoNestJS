@@ -48,11 +48,14 @@ const cookieSession = require('cookie-session')
   }],
 })
 export class AppModule {
+  constructor(
+    private configService: ConfigService
+  ){}
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(
       cookieSession({
         name: 'session',
-        keys: ['chibao'],
+        keys: [this.configService.get<string>('COOKIE_KEY')],
         maxAge: 24 * 60 * 60 * 1000
       })
     )
