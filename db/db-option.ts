@@ -22,6 +22,15 @@ var dbOptions: DataSourceOptions = {
       });
       break;
     case 'production':
+      Object.assign(dbOptions, {
+        type: 'postgres',
+        url: process.env.DATABASE_URL,
+        migrationsRun: true,
+        ssl: {
+          rejectUnauthorized: false,
+        },
+        
+      });
       break;
     default:
       throw new Error('unknown environment');

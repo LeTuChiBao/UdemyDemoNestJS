@@ -22,6 +22,6 @@ async function bootstrap() {
   //     forbidNonWhitelisted: true //Phần này để thông báo lỗi khi trường ko có trong dto
   //   })
   // )
-  await app.listen(3000);
+  await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
