@@ -14,18 +14,25 @@ export class ReportsService {
     ){}
 
     async createEstimate({make, model,year,lat,long, mileage}:GetEstimateDto){
-        return this.reportRepository.createQueryBuilder()
-            .select('AVG(price)','price')
-            .where('make = :make', { make})
-            .andWhere('model= :model', {model})
-            .andWhere('long - :long BETWEEN -5 AND 5', {long})
-            .andWhere('lat - :lat BETWEEN -5 AND 5', {lat})
-            .andWhere('year - :year BETWEEN -3 AND 3', {year})
-            .andWhere('approved IS TRUE')
-            .orderBy('ABS(mileage - :mileage)', 'DESC')
-            .setParameters({mileage})
-            .limit(3)
-            .getRawOne()
+         return this.reportRepository.createQueryBuilder()
+        .select('subquery.price', 'price')
+        .from(subQuery => {
+            return subQuery
+                .select('AVG(price)', 'price')
+                .addSelect('mileage')
+                .from('report', 'report')
+                .where('make = :make', { make })
+                .andWhere('model = :model', { model })
+                .andWhere('long - :long BETWEEN -5 AND 5', { long })
+                .andWhere('lat - :lat BETWEEN -5 AND 5', { lat })
+                .andWhere('year - :year BETWEEN -3 AND 3', { year })
+                .andWhere('approved IS TRUE')
+                .groupBy('mileage')
+        }, 'subquery')
+        .orderBy('ABS(subquery.mileage - :mileage)', 'DESC')
+        .setParameters({ mileage })
+        .limit(3)
+        .getRawOne();
     }
 
     async create(reportDto: CreateReportDto, user: User) {

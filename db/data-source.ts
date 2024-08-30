@@ -1,7 +1,10 @@
 import { DataSource } from 'typeorm';
-import dbOptions from './db-option'; 
+import {getDbOptions} from './db-option'; 
+import { ConfigService } from '@nestjs/config';
 // import { config } from 'dotenv';
 
 // config();
-const dataSource = new DataSource(dbOptions);
+const configService = new ConfigService();
+const options = getDbOptions(configService);
+const dataSource = new DataSource(options);
 export default dataSource;

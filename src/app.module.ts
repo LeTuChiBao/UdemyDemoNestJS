@@ -7,7 +7,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { ReportsModule } from './reports/reports.module';
-import dbOptions from '../db/db-option';
+import {getDbOptions} from '../db/db-option';
 const cookieSession = require('cookie-session')
 @Module({
   imports: [
@@ -15,20 +15,11 @@ const cookieSession = require('cookie-session')
       isGlobal: true,
       envFilePath: `.env.${process.env.NODE_ENV}`
     }),
-    TypeOrmModule.forRoot(dbOptions),
-    // TypeOrmModule.forRootAsync({
-    //   useFactory: (config: ConfigService) => {
-    //     const databaseOptions: TypeOrmModuleOptions = {
-    //       // retryAttempts: 10,
-    //       // retryDelay: 3000,
-    //       // autoLoadEntities: false
-    //     };
-
-    //     Object.assign(databaseOptions, dbOptions);
-
-    //     return databaseOptions;
-    //   }
-    // }) ,
+    // TypeOrmModule.forRoot(dbOptions),
+    TypeOrmModule.forRootAsync({
+      useFactory: (configService: ConfigService) => getDbOptions(configService),
+      inject: [ConfigService],
+    }),
   UsersModule, 
   ReportsModule],
   controllers: [AppController],
