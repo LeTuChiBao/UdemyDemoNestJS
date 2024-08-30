@@ -2,7 +2,7 @@ import { query } from 'express';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Report } from './report.entity';
-import { Long, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateReportDto } from './dtos/create-report.dto';
 import { User } from '../users/user.entity';
 import { GetEstimateDto } from './dtos/get-estimate.dto';
@@ -14,25 +14,29 @@ export class ReportsService {
     ){}
 
     async createEstimate({make, model,year,lat,long, mileage}:GetEstimateDto){
-         return this.reportRepository.createQueryBuilder()
-        .select('subquery.price', 'price')
-        .from(subQuery => {
-            return subQuery
-                .select('AVG(price)', 'price')
-                .addSelect('mileage')
-                .from('report', 'report')
-                .where('make = :make', { make })
-                .andWhere('model = :model', { model })
-                .andWhere('long - :long BETWEEN -5 AND 5', { long })
-                .andWhere('lat - :lat BETWEEN -5 AND 5', { lat })
-                .andWhere('year - :year BETWEEN -3 AND 3', { year })
-                .andWhere('approved IS TRUE')
-                .groupBy('mileage')
-        }, 'subquery')
-        .orderBy('ABS(subquery.mileage - :mileage)', 'DESC')
-        .setParameters({ mileage })
-        .limit(3)
-        .getRawOne();
+        const estimateCost = await this.reportRepository.createQueryBuilder()
+            .select('subquery.price', 'price')
+            .from(subQuery => {
+                return subQuery
+                    .select('AVG(price)', 'price')
+                    .addSelect('mileage')
+                    .from('report', 'report')
+                    .where('make = :make', { make })
+                    .andWhere('model = :model', { model })
+                    .andWhere('long - :long BETWEEN -5 AND 5', { long })
+                    .andWhere('lat - :lat BETWEEN -5 AND 5', { lat })
+                    .andWhere('year - :year BETWEEN -3 AND 3', { year })
+                    .andWhere('approved IS TRUE')
+                    .groupBy('mileage')
+            }, 'subquery')
+            .orderBy('ABS(subquery.mileage - :mileage)', 'ASC')
+            .setParameters({ mileage })
+            .limit(3)
+            .getRawOne();
+
+        if(!estimateCost) throw new NotFoundException('Query values data not found')
+        return estimateCost
+      
     }
 
     async create(reportDto: CreateReportDto, user: User) {
