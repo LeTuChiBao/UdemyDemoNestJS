@@ -17,22 +17,22 @@ export class User {
     @Column({default: false})
     admin: boolean;
 
-    @AfterInsert()
-    logInsert(){
-        console.log('Inserted User with Id', this.id);
-    }
+    // @AfterInsert()
+    // logInsert(){
+    //     console.log('Inserted User with Id', this.id);
+    // }
     @OneToMany(()=> Report, (report)=> report.user)
     reports: Report[];
 
-    @AfterUpdate()
-    logUpdate(){
-        console.log('Updated User with id',this.id);
-    }
+    // @AfterUpdate()
+    // logUpdate(){
+    //     console.log('Updated User with id',this.id);
+    // }
 
-    @AfterRemove()
-    logRemove(){
-        console.log('Removed User with id',this.id);
-    }
+    // @AfterRemove()
+    // logRemove(){
+    //     console.log('Removed User with id',this.id);
+    // }
 
    
 }
