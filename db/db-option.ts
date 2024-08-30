@@ -15,8 +15,8 @@ export  const getDbOptions = (configService: ConfigService): DataSourceOptions =
       migrationsTableName: 'migration_log',
       synchronize: false,
     };
-    console.log('ENV hiện tại: => ',process.env.DB_URL)
-    switch (process.env.NODE_ENV) {
+    console.log('ENV hiện tại: => ',environment)
+    switch (environment) {
       case 'development':
         break;
       case 'test':
